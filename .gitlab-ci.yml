@@ -55,8 +55,7 @@ publish:
     - if: '$CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/'
   environment: production
   script:
-    - !reference [install, script]
-    - 'poetry run poe ci'
+    - !reference [test, script]
     - 'poetry config repositories.cmr-pypi-prod-local $pypiProdWriterUrl'
     - 'poetry publish --build -r cmr-pypi-prod-local -u $pypiProdWriterUser -p $pypiProdWriterPassword'
 
