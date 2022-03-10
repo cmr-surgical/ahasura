@@ -1,0 +1,57 @@
+# TODO: Once we test it, move whole file to `/templates/python-poetry-package.ci.yml` in
+# https://gitlab.com/cmr-surgical/customer-operations/proof-of-concept/gitlab-ci-pipeline
+# and then apply the `Usage` below to this `ahasura/.gitlab-ci.yml` file
+
+# Usage:
+#
+#   include:
+#     - project: 'cmr-surgical/customer-operations/proof-of-concept/gitlab-ci-pipeline'
+#       ref: main
+#       file: '/templates/python-poetry-package.ci.yml'
+
+# This GitLab CI/CD template expects you are using python-poetry for python-3.8
+# and `poetry run poe ci` runs linters in read-only `--check` mode and then runs tests
+# Example: https://gitlab.com/cmr-surgical/customer-operations/versius-connect/python-packages/ahasura/-/blob/main/pyproject.toml
+
+# Ensure your repo - Settings - Repository has:
+# - Protected branches - main - Maintainers
+# - Protected tags - Protect a tag - *.*.* - Maintainers
+
+default:
+  image: python:3.8-alpine
+
+variables:
+  POETRY_CACHE_DIR: '$CI_PROJECT_DIR/.cache/pypoetry'
+  POETRY_VIRTUALENVS_IN_PROJECT: 'true'
+
+cache:
+  paths:
+    - '.cache/pypoetry'
+    - '.venv'
+
+stages:
+  - install
+  - test
+  - publish
+
+install:
+  stage: install
+  script:
+    - 'which poetry || curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -'
+    - 'export PATH="$HOME/.poetry/bin:$PATH"'
+    - 'poetry --version'
+    - 'poetry install'
+
+test:
+  stage: test
+  script:
+    - 'poetry run poe ci'
+
+publish:
+  stage: publish
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/'
+  environment: production
+  script:
+    - 'poetry config repositories.cmr-pypi-prod-local $pypiProdWriterUrl'
+    - 'poetry publish --build -r cmr-pypi-prod-local -u $pypiProdWriterUser -p $pypiProdWriterPassword'
