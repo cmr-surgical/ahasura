@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "ahasura"
+version = "1.1.0"
+description = "Async and sync Hasura client"
+readme = "README.md"
+keywords = ["async", "sync", "ahasura", "hasura", "client"]
+repository = "https://gitlab.com/cmr-surgical/customer-operations/versius-connect/python-packages/ahasura"
+authors = ["Denis Ryzhkov <denis.ryzhkov@cmrsurgical.com>"]
+license = "Proprietary"
+
+[tool.poetry.urls]
+Hasura = "https://hasura.io/"
+"Hasura docs" = "https://hasura.io/docs/latest/graphql/core/index.html"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+httpx = "^0"
+
+[tool.poetry.dev-dependencies]
+pytest = ">=6 <8"
+poethepoet = "^0"
+black = "^22"
+mypy = "^0"
+flake8 = "^4"
+pytest-mock = "^3"
+
+[tool.poe.tasks]
+test = "pytest -xv"
+lt.sequence = ["lint", "test"]
+
+[tool.poe.tasks.lint]
+env.PY_FILES = "ahasura.py tests"
+env.LINE_LENGTH = "88"
+default_item_type = "cmd"
+sequence = [
+    "black --line-length $LINE_LENGTH $PY_FILES",
+    "flake8 --max-line-length $LINE_LENGTH $PY_FILES",
+    "mypy --pretty $PY_FILES",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
