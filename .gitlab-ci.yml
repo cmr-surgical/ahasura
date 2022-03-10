@@ -27,6 +27,7 @@ variables:
 cache:
   paths:
     - '.cache/pypoetry'
+    - '.mypy_cache'
     - '.venv'
 
 stages:
