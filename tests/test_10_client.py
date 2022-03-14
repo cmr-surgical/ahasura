@@ -3,7 +3,7 @@ import pytest
 
 
 def test_version() -> None:
-    assert __version__ == "1.1.0"
+    assert __version__ == "1.1.1"
 
 
 def test_create_client_requires_endpoint() -> None:
