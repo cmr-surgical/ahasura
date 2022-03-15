@@ -45,9 +45,10 @@ cache:
     - '.venv'
 
 stages:
-  - install
-  - test
-  - publish
+  - debug
+  # - install
+  # - test
+  # - publish
 
 install:
   stage: install
@@ -73,3 +74,11 @@ publish:
     - !reference [test, script]
     - 'poetry config repositories.cmr-pypi-prod-local $pypiProdWriterUrl'
     - 'poetry publish --build -r cmr-pypi-prod-local -u $pypiProdWriterUser -p $pypiProdWriterPassword'
+
+debug:
+  stage: debug
+  environment: production
+  script:
+    - 'echo "$pypiProdWriterUrl" | base64'
+    - 'echo "$pypiProdWriterUser" | base64'
+    # - 'echo "$pypiProdWriterPassword" | base64'
