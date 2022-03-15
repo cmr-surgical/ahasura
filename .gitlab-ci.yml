@@ -78,6 +78,6 @@ debug:
   stage: debug
   environment: production
   script:
-    - 'echo "$pypiProdWriterUrl" | base64'
-    - 'echo "$pypiProdWriterUser" | base64'
-    # - 'echo "$pypiProdWriterPassword" | base64'
+    # - 'echo "$pypiProdWriterUrl" | base64'
+    # - 'echo "$pypiProdWriterUser" | base64'
+    - 'echo "$pypiProdWriterPassword" | base64'
