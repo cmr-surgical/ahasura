@@ -53,7 +53,7 @@ stages:
 ci:
   stage: ci
   script:
-    - 'apk --no-cache add curl gcc musl-dev'
+    - 'apk --no-cache add curl gcc libffi-dev musl-dev'
     - 'set -o pipefail && curl -sSL https://install.python-poetry.org | python3 || cat poetry-installer*.log && exit 1'
     - 'export PATH="$HOME/.poetry/bin:$PATH"'
     - 'poetry --version'
