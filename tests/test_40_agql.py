@@ -1,6 +1,7 @@
-from ahasura import ADMIN, Hasura, HasuraError
 import pytest
 from pytest_mock import MockerFixture
+
+from ahasura import ADMIN, Hasura, HasuraError
 
 pytestmark = pytest.mark.anyio
 

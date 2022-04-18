@@ -1,5 +1,6 @@
-from ahasura import __version__, Hasura
 import pytest
+
+from ahasura import Hasura, __version__
 
 
 def test_version() -> None:

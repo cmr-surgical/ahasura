@@ -39,6 +39,7 @@ env.LINE_LENGTH = "88"
 default_item_type = "cmd"
 sequence = [
     "black $CHECK --line-length $LINE_LENGTH $PY_FILES",
+    "isort $CHECK --line-length $LINE_LENGTH $PY_FILES",
     "flake8 --max-line-length $LINE_LENGTH $PY_FILES",
     "mypy --pretty $PY_FILES",
 ]
