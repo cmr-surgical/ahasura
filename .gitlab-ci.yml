@@ -36,6 +36,7 @@ variables:
   POETRY_VIRTUALENVS_IN_PROJECT: 'true'
 
 cache:
+  key: '1.2'
   paths:
     - '.cache/pypoetry'
     - '.mypy_cache'
