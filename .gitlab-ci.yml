@@ -55,7 +55,7 @@ ci:
   script:
     - 'apk --no-cache add curl gcc libffi-dev musl-dev'
     - 'set -o pipefail && curl -sSL https://install.python-poetry.org | python3'
-    - 'export PATH="$HOME/.poetry/bin:$PATH"'
+    - 'export PATH="$PATH:/root/.local/bin"'
     - 'poetry --version'
     - 'poetry install --no-interaction'
     - !reference [.ci, script]
