@@ -1,6 +1,6 @@
-from ahasura import ADMIN, Hasura, HasuraError
 import pytest
 
+from ahasura import ADMIN, Hasura, HasuraError
 
 #
 # _get_headers

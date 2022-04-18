@@ -4,72 +4,68 @@
 
 # This is GitLab CI/CD template for packages based on https://python-poetry.org/
 #
-# Assumptions are:
-#   - Python version is 3.8
-#   - `poetry run poe ci` runs linters in read-only `--check` mode and then runs tests
-#   - Tags with `{major}.{minor}.{patch}` names are published to private CMR PyPI (yet)
-#
-# Example of package, supporting these assumptions:
-#   https://gitlab.com/cmr-surgical/customer-operations/versius-connect/python-packages/ahasura
-#
-# You can override these assumptions after you `include` this template:
-# https://docs.gitlab.com/ee/ci/yaml/includes.html#override-included-configuration-values
+# Usage:
 #
 #   include:
 #     - project: 'cmr-surgical/customer-operations/proof-of-concept/gitlab-ci-pipeline'
 #       ref: main
 #       file: '/templates/python-poetry-package.ci.yml'
 #
-#   test:
-#     stage: test
-#     script:
-#       - !reference [install, script]
-#       - '{specify how you lint --check and test here}'
+# Assumptions are:
+#   - Python version is 3.8
+#   - Tags with `{major}.{minor}.{patch}` names are published to `cmr-pypi-prod-local`
+#   - `poetry run poe ci` runs linters in read-only `--check` mode and then runs tests
+#     - For example, see `[tool.poe.tasks.ci]` in
+#       https://gitlab.com/cmr-surgical/customer-operations/versius-connect/python-packages/ahasura/-/blob/main/pyproject.toml
+#     - Or use your own script, defined after the `include` above:
+#
+#       .ci:
+#         script:
+#           - '{specify how you lint --check and test here}'
 #
 # Please ensure in your repo - Settings - Repository:
 #   - Protected branches - main - Maintainers
 #   - Protected tags - Protect a tag - *.*.* - Maintainers
 
-
 default:
   image: python:3.8-alpine
 
 variables:
+  POETRY_VERSION: '1.1.13'
   POETRY_CACHE_DIR: '$CI_PROJECT_DIR/.cache/pypoetry'
   POETRY_VIRTUALENVS_IN_PROJECT: 'true'
 
 cache:
+  key: '1.2'
   paths:
     - '.cache/pypoetry'
     - '.mypy_cache'
     - '.venv'
 
 stages:
-  - install
-  - test
-  - publish
+  - ci
+  - cd
 
-install:
-  stage: install
+.ci:
   script:
-    - 'apk --no-cache add curl'
-    - 'which poetry || curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -'
-    - 'export PATH="$HOME/.poetry/bin:$PATH"'
-    - 'poetry --version'
-    - 'poetry install'
-
-test:
-  stage: test
-  script:
-    - !reference [install, script]
     - 'poetry run poe ci'
 
-publish:
-  stage: publish
+ci:
+  stage: ci
+  script:
+    - 'apk --no-cache add curl gcc libffi-dev musl-dev'
+    - 'set -o pipefail && curl -sSL https://install.python-poetry.org | python3'
+    - 'export PATH="$PATH:/root/.local/bin"'
+    - 'poetry --version'
+    - 'poetry install --no-interaction'
+    - !reference [.ci, script]
+
+cd:
+  stage: cd
   rules:
     - if: '$CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/'
   environment: production
   script:
-    - !reference [test, script]
+    - !reference [ci, script]
     - 'poetry config repositories.cmr-pypi-prod-local $pypiProdWriterUrl'
     - 'poetry publish --build -r cmr-pypi-prod-local -u $pypiProdWriterUser -p $pypiProdWriterPassword'

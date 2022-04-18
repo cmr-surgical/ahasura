@@ -1,5 +1,6 @@
-from ahasura import Hasura
 import pytest
+
+from ahasura import Hasura
 
 
 @pytest.fixture(scope="session")
