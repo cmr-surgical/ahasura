@@ -15,8 +15,14 @@ class Hasura:
     graphql_endpoint: str
     sql_endpoint: str
     admin_secret: Optional[str] = None
+    timeout: float
 
-    def __init__(self, endpoint: str, admin_secret: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        admin_secret: Optional[str] = None,
+        timeout: float = 10,
+    ) -> None:
         """Create Hasura client
 
         It just keeps the configuration passed, so you can reuse global client(s)
@@ -24,6 +30,7 @@ class Hasura:
         Args:
             endpoint: `HASURA_GRAPHQL_ENDPOINT`, without trailing `/` or `/v1/graphql`
             admin_secret: `HASURA_GRAPHQL_ADMIN_SECRET`, required for `auth=ADMIN` only
+            timeout: Seconds of network inactivity allowed. `None` disables the timeout
 
         Examples:
             Client::
@@ -43,6 +50,7 @@ class Hasura:
         self.graphql_endpoint = f"{endpoint}/v1/graphql"
         self.sql_endpoint = f"{endpoint}/v2/query"
         self.admin_secret = admin_secret
+        self.timeout = timeout
 
     def gql(self, query: str, auth: str, **variables) -> Dict[str, Any]:
         """Execute GraphQL query at Hasura, sync version
@@ -67,10 +75,13 @@ class Hasura:
 
                 data = hasura.gql(...)
         """
+        response = httpx.post(
+            self.graphql_endpoint,
+            headers=self._get_headers(auth),
+            json={"query": query, "variables": variables},
+            timeout=self.timeout,
+        )
 
-        headers = self._get_headers(auth)
-        content = {"query": query, "variables": variables}
-        response = httpx.post(self.graphql_endpoint, headers=headers, json=content)
         return self._get_data(response.json())
 
     __call__ = gql  # `hasura(...)` is a shortcut for `hasura.gql(...)`
@@ -89,12 +100,12 @@ class Hasura:
 
                 data = await hasura.agql(...)
         """
-        headers = self._get_headers(auth)
-        content = {"query": query, "variables": variables}
-
         async with httpx.AsyncClient() as ahttpx:
             response = await ahttpx.post(
-                self.graphql_endpoint, headers=headers, json=content
+                self.graphql_endpoint,
+                headers=self._get_headers(auth),
+                json={"query": query, "variables": variables},
+                timeout=self.timeout,
             )
 
         return self._get_data(response.json())
@@ -116,9 +127,13 @@ class Hasura:
 
             rows = hasura.sql(...)
         """
-        headers = self._get_headers(ADMIN)
-        content = self._get_run_sql_content(query)
-        response = httpx.post(self.sql_endpoint, headers=headers, json=content)
+        response = httpx.post(
+            self.sql_endpoint,
+            headers=self._get_headers(ADMIN),
+            json=self._get_run_sql_content(query),
+            timeout=self.timeout,
+        )
+
         return self._get_rows(response.json())
 
     async def asql(self, query: str) -> List[Dict[str, Any]]:
@@ -130,12 +145,12 @@ class Hasura:
 
             rows = await hasura.asql(...)
         """
-        headers = self._get_headers(ADMIN)
-        content = self._get_run_sql_content(query)
-
         async with httpx.AsyncClient() as ahttpx:
             response = await ahttpx.post(
-                self.sql_endpoint, headers=headers, json=content
+                self.sql_endpoint,
+                headers=self._get_headers(ADMIN),
+                json=self._get_run_sql_content(query),
+                timeout=self.timeout,
             )
 
         return self._get_rows(response.json())

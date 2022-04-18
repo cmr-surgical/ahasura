@@ -13,15 +13,16 @@ Hasura = "https://hasura.io/"
 "Hasura docs" = "https://hasura.io/docs/latest/graphql/core/index.html"
 
 [tool.poetry.dependencies]
-python = "^3.8"
 httpx = "^0"
+python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-pytest = ">=6 <8"
-poethepoet = "^0"
 black = "^22"
-mypy = "^0"
 flake8 = "^4"
+isort = "^5"
+mypy = "^0"
+poethepoet = "^0"
+pytest = ">=6 <8"
 pytest-mock = "^3"
 
 [tool.poe.tasks]

@@ -31,6 +31,7 @@ def test_sql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
                 "read_only": True,
             },
         },
+        timeout=10,
     )
 
 
@@ -47,4 +48,5 @@ def test_sql_raises_HasuraError(hasura: Hasura, mocker: MockerFixture) -> None:
         "http://localhost:8080/v2/query",
         headers={"x-hasura-admin-secret": "fake secret"},
         json={"type": "run_sql", "args": {"sql": "bad query", "read_only": False}},
+        timeout=10,
     )

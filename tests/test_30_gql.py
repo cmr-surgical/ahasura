@@ -13,6 +13,7 @@ def test_gql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
         "http://localhost:8080/v1/graphql",
         headers={"x-hasura-admin-secret": "fake secret"},
         json={"query": "query { item { id }}", "variables": {}},
+        timeout=10,
     )
 
 
@@ -32,6 +33,7 @@ def test_gql_shortcut_and_auth_and_vars(hasura: Hasura, mocker: MockerFixture) -
         "http://localhost:8080/v1/graphql",
         headers={"authorization": "Bearer REDACTED"},
         json={"query": "query($name: String!) {...}", "variables": {"name": "value"}},
+        timeout=10,
     )
 
 
@@ -48,4 +50,5 @@ def test_gql_raises_HasuraError(hasura: Hasura, mocker: MockerFixture) -> None:
         "http://localhost:8080/v1/graphql",
         headers={"x-hasura-admin-secret": "fake secret"},
         json={"query": "bad query", "variables": {}},
+        timeout=10,
     )

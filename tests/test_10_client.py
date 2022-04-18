@@ -5,6 +5,9 @@ import pytest
 def test_version() -> None:
     assert __version__ == "1.1.1"
 
+    with open("pyproject.toml", "r") as pyproject:
+        assert pyproject.readlines()[2] == f'version = "{__version__}"\n'
+
 
 def test_create_client_requires_endpoint() -> None:
     with pytest.raises(TypeError) as error:
