@@ -52,6 +52,8 @@ stages:
 
 ci:
   stage: ci
+  rules:
+    - if: '$CI_COMMIT_TAG !~ /^[0-9]+\.[0-9]+\.[0-9]+$/'
   script:
     - 'apk --no-cache add curl gcc libffi-dev musl-dev'
     - 'set -o pipefail && curl -sSL https://install.python-poetry.org | python3'
