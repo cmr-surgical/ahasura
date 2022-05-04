@@ -2,6 +2,15 @@
 
 Async and sync [Hasura](https://hasura.io/) client
 
+## Install from CMR PyPI
+
+```
+source .pypi-reader-secrets
+poetry add ahasura
+```
+
+It will become open-source soon, stay tuned!
+
 ## Quick example
 
 ```
