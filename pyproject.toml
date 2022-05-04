@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ahasura"
-version = "1.2.0"
+version = "1.2.2"
 description = "Async and sync Hasura client"
 readme = "README.md"
 keywords = ["async", "sync", "ahasura", "hasura", "client"]

@@ -1,6 +1,6 @@
 """Async and sync Hasura client"""
 
-__version__ = "1.2.0"
+__version__ = "1.2.2"
 
 from typing import Any, Dict, List, Optional
 
