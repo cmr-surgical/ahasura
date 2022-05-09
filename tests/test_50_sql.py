@@ -15,7 +15,10 @@ def test_sql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
         ],
     }
 
-    data = hasura.sql('SELECT "column1", "column2" FROM "table"')
+    data = hasura.sql(
+        'SELECT "column1", "column2" FROM "table"',
+        headers={"x-hasura-something": "special"},
+    )
 
     assert data == [
         {"column1": "value11", "column2": "value12"},
@@ -24,7 +27,10 @@ def test_sql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
 
     post.assert_called_once_with(
         "http://localhost:8080/v2/query",
-        headers={"x-hasura-admin-secret": "fake secret"},
+        headers={
+            "x-hasura-admin-secret": "fake secret",
+            "x-hasura-something": "special",
+        },
         json={
             "type": "run_sql",
             "args": {

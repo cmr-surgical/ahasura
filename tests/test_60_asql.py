@@ -21,7 +21,10 @@ async def test_asql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
     post = asyncClient.__aenter__.return_value.post
     post.return_value.json = mocker.Mock(return_value=response_json)
 
-    data = await hasura.asql('SELECT "column1", "column2" FROM "table"')
+    data = await hasura.asql(
+        'SELECT "column1", "column2" FROM "table"',
+        headers={"x-hasura-something": "special"},
+    )
 
     assert data == [
         {"column1": "value11", "column2": "value12"},
@@ -30,7 +33,10 @@ async def test_asql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
 
     post.assert_awaited_once_with(
         "http://localhost:8080/v2/query",
-        headers={"x-hasura-admin-secret": "fake secret"},
+        headers={
+            "x-hasura-admin-secret": "fake secret",
+            "x-hasura-something": "special",
+        },
         json={
             "type": "run_sql",
             "args": {

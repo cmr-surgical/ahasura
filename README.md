@@ -55,6 +55,7 @@ assert item["name"] == "Some name"
 * Args:
     * `query: str` - GraphQL query, e.g. `query { item { id }}`
     * `auth: str` - Either `ADMIN` or value of `Authorization` header, e.g. `Bearer {JWT}`
+    * `headers: Optional[Dict[str, str]]` - Custom headers, if any
     * `**variables` - Variables used in `query`, if any
 * Returns: GraphQL response data, e.g. `{"item": [{"id": "..."}]}`
 * Raises: `HasuraError` - If JSON response from Hasura contains `errors` key
@@ -63,7 +64,9 @@ assert item["name"] == "Some name"
 
 * Sync: `rows = hasura.sql(...)`
 * Async: `rows = await hasura.asql(...)`
-* Args: `query: str` - SQL query, e.g. `SELECT "id" FROM "item"`
+* Args:
+    * `query: str` - SQL query, e.g. `SELECT "id" FROM "item"`
+    * `headers: Optional[Dict[str, str]]` - Custom headers, if any
 * Returns:
     * Rows selected by `SELECT` query, e.g. `[{"id": "..."}]`
     * Or `[{"ok": True}]` for non-`SELECT` query

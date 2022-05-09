@@ -18,13 +18,17 @@ def test_gql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
     )
 
 
-def test_gql_shortcut_and_auth_and_vars(hasura: Hasura, mocker: MockerFixture) -> None:
+def test_gql_shortcut_and_auth_and_headers_and_vars(
+    hasura: Hasura,
+    mocker: MockerFixture,
+) -> None:
     post = mocker.patch("httpx.post")
     post.return_value.json.return_value = {"data": {"item": [{"id": "fake"}]}}
 
     data = hasura(
         "query($name: String!) {...}",
         auth="Bearer REDACTED",
+        headers={"x-hasura-something": "special"},
         name="value",
     )
 
@@ -32,7 +36,7 @@ def test_gql_shortcut_and_auth_and_vars(hasura: Hasura, mocker: MockerFixture) -
 
     post.assert_called_once_with(
         "http://localhost:8080/v1/graphql",
-        headers={"authorization": "Bearer REDACTED"},
+        headers={"authorization": "Bearer REDACTED", "x-hasura-something": "special"},
         json={"query": "query($name: String!) {...}", "variables": {"name": "value"}},
         timeout=10,
     )

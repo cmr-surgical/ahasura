@@ -17,6 +17,7 @@ async def test_agql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
     data = await ahasura(
         "query($name: String!) {...}",
         auth="Bearer REDACTED",
+        headers={"x-hasura-something": "special"},
         name="value",
     )
 
@@ -24,7 +25,7 @@ async def test_agql_returns_ok(hasura: Hasura, mocker: MockerFixture) -> None:
 
     post.assert_awaited_once_with(
         "http://localhost:8080/v1/graphql",
-        headers={"authorization": "Bearer REDACTED"},
+        headers={"authorization": "Bearer REDACTED", "x-hasura-something": "special"},
         json={"query": "query($name: String!) {...}", "variables": {"name": "value"}},
         timeout=10,
     )
