@@ -1,6 +1,6 @@
 """Async and sync Hasura client"""
 
-__version__ = "1.2.2"
+__version__ = "1.3.0"
 
 from typing import Any, Dict, List, Optional
 
@@ -52,12 +52,19 @@ class Hasura:
         self.admin_secret = admin_secret
         self.timeout = timeout
 
-    def gql(self, query: str, auth: str, **variables) -> Dict[str, Any]:
+    def gql(
+        self,
+        query: str,
+        auth: str,
+        headers: Optional[Dict[str, str]] = None,
+        **variables,
+    ) -> Dict[str, Any]:
         """Execute GraphQL query at Hasura, sync version
 
         Args:
             query: GraphQL query, e.g. `query { item { id }}`
             auth: Either `ADMIN` or value of `Authorization` header, e.g. `Bearer {JWT}`
+            headers: Custom headers, if any
             **variables: Variables used in `query`, if any
 
         Returns:
@@ -77,7 +84,7 @@ class Hasura:
         """
         response = httpx.post(
             self.graphql_endpoint,
-            headers=self._get_headers(auth),
+            headers=self._get_headers(auth, headers),
             json={"query": query, "variables": variables},
             timeout=self.timeout,
         )
@@ -86,7 +93,13 @@ class Hasura:
 
     __call__ = gql  # `hasura(...)` is a shortcut for `hasura.gql(...)`
 
-    async def agql(self, query: str, auth: str, **variables) -> Dict[str, Any]:
+    async def agql(
+        self,
+        query: str,
+        auth: str,
+        headers: Optional[Dict[str, str]] = None,
+        **variables,
+    ) -> Dict[str, Any]:
         """Execute GraphQL query at Hasura, async version
 
         Please see the docs of sync version
@@ -103,18 +116,23 @@ class Hasura:
         async with httpx.AsyncClient() as ahttpx:
             response = await ahttpx.post(
                 self.graphql_endpoint,
-                headers=self._get_headers(auth),
+                headers=self._get_headers(auth, headers),
                 json={"query": query, "variables": variables},
                 timeout=self.timeout,
             )
 
         return self._get_data(response.json())
 
-    def sql(self, query: str) -> List[Dict[str, Any]]:
+    def sql(
+        self,
+        query: str,
+        headers: Optional[Dict[str, str]] = None,
+    ) -> List[Dict[str, Any]]:
         """Execute SQL query at Hasura, sync version
 
         Args:
             query: SQL query, e.g. `SELECT "id" FROM "item"`
+            headers: Custom headers, if any
 
         Returns:
             Rows selected by `SELECT` query, e.g. `[{"id": "..."}]`,
@@ -129,14 +147,18 @@ class Hasura:
         """
         response = httpx.post(
             self.sql_endpoint,
-            headers=self._get_headers(ADMIN),
+            headers=self._get_headers(ADMIN, headers),
             json=self._get_run_sql_content(query),
             timeout=self.timeout,
         )
 
         return self._get_rows(response.json())
 
-    async def asql(self, query: str) -> List[Dict[str, Any]]:
+    async def asql(
+        self,
+        query: str,
+        headers: Optional[Dict[str, str]] = None,
+    ) -> List[Dict[str, Any]]:
         """Execute SQL query at Hasura, async version
 
         Please see the docs of sync version
@@ -148,7 +170,7 @@ class Hasura:
         async with httpx.AsyncClient() as ahttpx:
             response = await ahttpx.post(
                 self.sql_endpoint,
-                headers=self._get_headers(ADMIN),
+                headers=self._get_headers(ADMIN, headers),
                 json=self._get_run_sql_content(query),
                 timeout=self.timeout,
             )
@@ -157,12 +179,20 @@ class Hasura:
 
     # Private DRY implementation parts of the public API above:
 
-    def _get_headers(self, auth: str) -> Dict[str, str]:
+    def _get_headers(
+        self,
+        auth: str,
+        headers: Optional[Dict[str, str]] = None,
+    ) -> Dict[str, str]:
         if auth == ADMIN:
             assert self.admin_secret
-            return {"x-hasura-admin-secret": self.admin_secret}
+            result = {"x-hasura-admin-secret": self.admin_secret}
+        else:
+            result = {"authorization": auth}
 
-        return {"authorization": auth}
+        if headers:
+            result.update(headers)
+        return result
 
     def _get_run_sql_content(self, query: str) -> Dict[str, Any]:
         read_only = query.lstrip()[:6].upper() == "SELECT"

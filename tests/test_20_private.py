@@ -17,6 +17,23 @@ def test_get_headers_for_non_admin(hasura: Hasura) -> None:
     }
 
 
+def test_get_headers_for_admin_with_custom_headers(hasura: Hasura) -> None:
+    assert hasura._get_headers(ADMIN, {"x-hasura-something": "special"}) == {
+        "x-hasura-admin-secret": "fake secret",
+        "x-hasura-something": "special",
+    }
+
+
+def test_get_headers_for_non_admin_with_custom_headers(hasura: Hasura) -> None:
+    assert hasura._get_headers(
+        "Bearer REDACTED",
+        headers={"x-hasura-something": "special"},
+    ) == {
+        "authorization": "Bearer REDACTED",
+        "x-hasura-something": "special",
+    }
+
+
 #
 # _get_run_sql_content
 #

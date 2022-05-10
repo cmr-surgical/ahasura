@@ -4,7 +4,7 @@ from ahasura import Hasura, __version__
 
 
 def test_version() -> None:
-    assert __version__ == "1.2.2"
+    assert __version__ == "1.3.0"
 
     with open("pyproject.toml", "r") as pyproject:
         assert pyproject.readlines()[2] == f'version = "{__version__}"\n'
