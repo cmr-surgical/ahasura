@@ -2,3 +2,6 @@ include:
   - project: 'cmr-surgical/customer-operations/proof-of-concept/gitlab-ci-pipeline'
     ref: latest
     file: '/templates/python-poetry-package-versioned.ci.yml'
+
+variables:
+  PUBLISH_TO_PYPI: 'YES'
