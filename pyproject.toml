@@ -6,7 +6,7 @@ readme = "README.md"
 keywords = ["async", "sync", "ahasura", "hasura", "client"]
 repository = "https://gitlab.com/cmr-surgical/customer-operations/versius-connect/python-packages/ahasura"
 authors = ["Denis Ryzhkov <denis.ryzhkov@cmrsurgical.com>"]
-license = "Proprietary"
+license = "MIT"
 
 [tool.poetry.urls]
 Hasura = "https://hasura.io/"
