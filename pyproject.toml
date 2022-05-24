@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "ahasura"
-version = "1.4.0"
+version = "1.4.1"
 description = "Async and sync Hasura client"
 readme = "README.md"
 keywords = ["async", "sync", "ahasura", "hasura", "client"]
-repository = "https://gitlab.com/cmr-surgical/customer-operations/versius-connect/python-packages/ahasura"
+repository = "https://github.com/cmr-surgical/ahasura"
 authors = ["Denis Ryzhkov <denis.ryzhkov@cmrsurgical.com>"]
 license = "MIT"
 
