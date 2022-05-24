@@ -1,15 +1,16 @@
 # ahasura
 
-Async and sync [Hasura](https://hasura.io/) client
+Async and sync [Hasura](https://hasura.io/) client.
 
-## Install from CMR PyPI
+## Install
+
+ahasura is available on PyPi
 
 ```
-source .pypi-reader-secrets
+pip install ahasura
+# Or
 poetry add ahasura
 ```
-
-It will become open-source soon, stay tuned!
 
 ## Quick example
 
