@@ -1,5 +1,5 @@
 include:
-  - project: 'cmr-surgical/customer-operations/proof-of-concept/gitlab-ci-pipeline'
+  - project: 'cmr-surgical/customer-operations/analytics-and-tools/tools/gitlab-ci-pipeline'
     ref: latest
     file: '/templates/python-poetry-package-versioned.ci.yml'
 
