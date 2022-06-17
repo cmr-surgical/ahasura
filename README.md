@@ -4,7 +4,7 @@ Async and sync [Hasura](https://hasura.io/) client.
 
 ## Install
 
-ahasura is available on PyPi
+ahasura is available on PyPi:
 
 ```
 pip install ahasura
@@ -40,6 +40,7 @@ assert item["name"] == "Some name"
 * Args:
     * `endpoint: str` - `HASURA_GRAPHQL_ENDPOINT`, without trailing `/` or `/v1/graphql`
     * `admin_secret: Optional[str]` - `HASURA_GRAPHQL_ADMIN_SECRET`, required for `auth=ADMIN` only
+    * `timeout: Optional[float] = 10` - Seconds of network inactivity allowed. `None` disables the timeout
 * `hasura` client just keeps the configuration above, so you can reuse global client(s)
 * Shortcuts:
     * `hasura(...)` is a shortcut for sync GraphQL client: `hasura.gql(...)`

@@ -1,6 +1,6 @@
 """Async and sync Hasura client"""
 
-__version__ = "1.4.1"
+__version__ = "1.4.2"
 
 from typing import Any, Dict, List, Optional
 
@@ -15,13 +15,13 @@ class Hasura:
     graphql_endpoint: str
     sql_endpoint: str
     admin_secret: Optional[str] = None
-    timeout: float
+    timeout: Optional[float]
 
     def __init__(
         self,
         endpoint: str,
         admin_secret: Optional[str] = None,
-        timeout: float = 10,
+        timeout: Optional[float] = 10,
     ) -> None:
         """Create Hasura client
 
